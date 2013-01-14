@@ -3,7 +3,11 @@
 
 <% @nodes.each do |n| -%>
 define host {
+<% if n['virtual'] %>
+  use virtual-server
+<% else %>
   use server
+<% end %>
   address <%= n['ipaddress'] %>
   host_name <%= n['hostname'] %>
 <% if n.roles.nil? || n.roles.length == 0 -%>
@@ -17,6 +21,9 @@ define host {
   <% end %>
   <% if n['icinga'].has_key? 'additional_contact_groups' %>
   contactgroups <%= n['icinga']['additional_contact_groups'].join(",") %>
+  <% end %>
+  <% if n['icinga'].has_key? 'additional_contact_groups' %>
+  check_command <%= n['icinga']['check_command'] %>
   <% end %>
 <% end %>
 }
